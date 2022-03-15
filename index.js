@@ -47,6 +47,11 @@ app.get("/getcalendar", async(req, res)=>{
     res.json(appointments);
 });
 
+app.get("/event/:id", async(req, res)=>{
+    var appointment = await AppointmentService.GetById(req.params.id);
+   res.render("event", {appo: appointment});
+});
+
 app.listen(8080, ()=>{
     console.log("Servidor Rodando!");
 });
