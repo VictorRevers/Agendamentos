@@ -17,6 +17,8 @@ mongoose.connect("mongodb://localhost:27017/agendamento", {useNewUrlParser: true
 
 app.get("/", (req,res) =>{
     res.render('index');
+    console.log(req.connection.remoteAddress)
+   
 });
 
 app.get("/cadastro", (req,res)=>{
@@ -57,6 +59,11 @@ app.post("/finish", async(req,res)=>{
     var id = req.body.id;
     var result = await AppointmentService.Finish(id); 
     res.redirect("/");
+});
+
+app.get("/list", async(req,res)=>{
+    var appos = await AppointmentService.GetAll(true);
+    res.render("list", {appos});
 });
 
 app.listen(8080, ()=>{
