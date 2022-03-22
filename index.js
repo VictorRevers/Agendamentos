@@ -62,8 +62,16 @@ app.post("/finish", async(req,res)=>{
 });
 
 app.get("/list", async(req,res)=>{
+    //await AppointmentService.Search("002.020.202-02");
     var appos = await AppointmentService.GetAll(true);
     res.render("list", {appos});
+});
+
+app.get("/searchresult", async(req,res)=>{
+    var appos = await AppointmentService.Search(req.query.search); //formulário get => request está na query e não no body
+    res.render("list", {appos});
+    //console.log(req.body.search);
+    //res.json({});
 });
 
 app.listen(8080, ()=>{
