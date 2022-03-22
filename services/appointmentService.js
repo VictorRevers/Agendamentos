@@ -14,7 +14,8 @@ class AppointmentService{
             cpf,
             date,
             time,
-            finished: false
+            finished: false,
+            notified: false
         });
 
         try{
@@ -71,6 +72,16 @@ class AppointmentService{
             console.log(err);
             return false;
         }       
+    }
+
+    async SendNotification(){
+        try{
+            var appos = await this.GetAll(false);
+            console.log(appos);
+        }catch(err){
+            console.log(err);
+        }
+       
     }
 
 }

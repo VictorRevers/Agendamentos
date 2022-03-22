@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const mongoose = require('mongoose');
 const AppointmentService = require("./services/appointmentService");
+const appointmentService = require('./services/appointmentService');
 
 app.use(express.static("public"));
 
@@ -73,6 +74,13 @@ app.get("/searchresult", async(req,res)=>{
     //console.log(req.body.search);
     //res.json({});
 });
+
+
+var pollTime = 5000; //2 * 60000;
+
+setInterval(async() => {
+    await AppointmentService.SendNotification();
+}, pollTime);
 
 app.listen(8080, ()=>{
     console.log("Servidor Rodando!");
