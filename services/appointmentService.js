@@ -1,6 +1,7 @@
 var appointment = require("../models/Appointment");
 var mongoose = require("mongoose");
 var AppointmentFactory = require("../factories/AppointmentFactory");
+var mailer = require("nodemailer");
 
 const Appo = mongoose.model("Appointment", appointment);
 
@@ -75,13 +76,37 @@ class AppointmentService{
     }
 
     async SendNotification(){
-        try{
+        var transporter = mailer.createTransport({
+            host: "smtp.mailtrap.io",
+            port: 2525,
+            auth: {
+                user: "075b88020de513",
+                pass: "4b1d99639743fa"
+            }
+        });
+     
             var appos = await this.GetAll(false);
-            console.log(appos);
-        }catch(err){
-            console.log(err);
-        }
-       
+            appos.forEach( app =>{
+                var date = app.start.getTime();
+                var hour = 1000 * 60 * 60;
+                var gap = date - Date.now();
+
+                if(gap <= hour){
+                    if(!app.notified){                      
+                       transporter.sendMail({
+                           from: "Agendamento Consultas <consultas@marcar.com.br>",
+                           to: app.email,
+                           subject: "Sua consulta ocorrerá em breve!",
+                           text: "ATENÇÃO: " + app.title + " OCORRERÁ " + app.start
+                       }).then(async()=>{
+                            await Appo.findByIdAndUpdate(app.id, {notified: true});
+                            console.log("Email enviado!");
+                       }).catch(err=>{
+                           console.log(err);
+                       });
+                    }                  
+                }
+            });            
     }
 
 }
